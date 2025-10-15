@@ -179,6 +179,123 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* How It Works Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              How ChurchFlow Works
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Get started in three simple steps
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-primary-500 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
+                1
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Sign Up & Setup</h3>
+              <p className="text-gray-600">
+                Create your account, set up your organization structure, and invite your team members.
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-primary-500 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
+                2
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Configure & Customize</h3>
+              <p className="text-gray-600">
+                Set up your approval workflows, add bank accounts, and customize settings to match your needs.
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-primary-500 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
+                3
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Start Managing</h3>
+              <p className="text-gray-600">
+                Begin tracking income, processing expenditures, and generating comprehensive financial reports.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Benefits Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+                Why Churches Choose ChurchFlow
+              </h2>
+              <div className="space-y-4">
+                <div className="flex items-start">
+                  <CheckCircle className="h-6 w-6 text-primary-500 mr-3 flex-shrink-0 mt-1" />
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-1">Complete Transparency</h3>
+                    <p className="text-gray-600">
+                      Track every transaction with detailed audit trails and comprehensive reporting.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <CheckCircle className="h-6 w-6 text-primary-500 mr-3 flex-shrink-0 mt-1" />
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-1">Multi-Level Approval</h3>
+                    <p className="text-gray-600">
+                      Set up customizable approval workflows for different types of expenditures.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <CheckCircle className="h-6 w-6 text-primary-500 mr-3 flex-shrink-0 mt-1" />
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-1">Role-Based Access</h3>
+                    <p className="text-gray-600">
+                      Secure access control with different permission levels for different roles.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <CheckCircle className="h-6 w-6 text-primary-500 mr-3 flex-shrink-0 mt-1" />
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-1">Real-Time Reports</h3>
+                    <p className="text-gray-600">
+                      Generate financial, audit, and HR reports instantly whenever you need them.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <CheckCircle className="h-6 w-6 text-primary-500 mr-3 flex-shrink-0 mt-1" />
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-1">Easy to Use</h3>
+                    <p className="text-gray-600">
+                      Intuitive interface designed for church administrators with no technical expertise required.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div className="bg-gradient-to-br from-primary-50 to-primary-100 rounded-lg p-8">
+                <BarChart3 className="h-48 w-48 text-primary-500 mx-auto" />
+                <p className="text-center text-gray-700 mt-6">
+                  "ChurchFlow has transformed how we manage our finances. The transparency and ease of use are unmatched."
+                </p>
+                <p className="text-center text-gray-900 font-semibold mt-4">
+                  - Church Administrator
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-20 bg-primary-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
