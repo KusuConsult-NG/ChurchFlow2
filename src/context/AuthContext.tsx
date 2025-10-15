@@ -34,8 +34,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        // Only run on client side
+        if (typeof window === 'undefined') {
+          setLoading(false)
+          return
+        }
+
         // Use token-based auth
-        const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
+        const token = localStorage.getItem('auth_token')
         if (token) {
           const response = await fetch('/api/auth/verify', {
             headers: {
@@ -47,53 +53,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const data = await response.json()
             setUser(data.user)
           } else {
-            if (typeof window !== 'undefined') {
-              localStorage.removeItem('auth_token')
-            }
-            // Set mock user for development
-            setUser({
-              id: 'dev-user-1',
-              email: 'admin@churchflow.com',
-              name: 'Admin User',
-              firstName: 'Admin',
-              lastName: 'User',
-              role: 'Financial Secretary',
-              organizationId: 'org-2',
-              organizationName: 'ChurchFlow GoodNews HighCost',
-              organizationType: 'LC'
-            })
+            localStorage.removeItem('auth_token')
+            setUser(null)
           }
         } else {
-          // Set mock user for development when no token
-          setUser({
-            id: 'dev-user-1',
-            email: 'admin@churchflow.com',
-            name: 'Admin User',
-            firstName: 'Admin',
-            lastName: 'User',
-            role: 'Financial Secretary',
-            organizationId: 'org-2',
-            organizationName: 'ChurchFlow GoodNews HighCost',
-            organizationType: 'LC'
-          })
+          setUser(null)
         }
       } catch (error) {
         console.error('Auth check failed:', error)
         if (typeof window !== 'undefined') {
           localStorage.removeItem('auth_token')
         }
-        // Set mock user for development
-        setUser({
-          id: 'dev-user-1',
-          email: 'admin@churchflow.com',
-          name: 'Admin User',
-          firstName: 'Admin',
-          lastName: 'User',
-          role: 'Financial Secretary',
-          organizationId: 'org-2',
-          organizationName: 'ChurchFlow GoodNews HighCost',
-          organizationType: 'LC'
-        })
+        setUser(null)
       } finally {
         setLoading(false)
       }
