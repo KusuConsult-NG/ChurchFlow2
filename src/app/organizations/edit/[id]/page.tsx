@@ -35,7 +35,7 @@ interface Organization {
   isActive: boolean
 }
 
-export default function EditOrganizationPage({ params }: { params: { id: string } }) {
+export default function EditOrganizationPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
   const toast = useToastHelpers()
   const [organization, setOrganization] = useState<Organization | null>(null)
@@ -56,6 +56,7 @@ export default function EditOrganizationPage({ params }: { params: { id: string 
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [organizationId, setOrganizationId] = useState<string>('')
 
   const organizationTypes = [
     { value: 'GCC', label: 'General Church Council (GCC)', description: 'National Headquarters' },
@@ -65,11 +66,21 @@ export default function EditOrganizationPage({ params }: { params: { id: string 
   ]
 
   useEffect(() => {
+    const initializeParams = async () => {
+      const resolvedParams = await params
+      setOrganizationId(resolvedParams.id)
+    }
+    initializeParams()
+  }, [params])
+
+  useEffect(() => {
+    if (!organizationId) return
+
     const fetchOrganization = async () => {
       try {
         const response = await apiClient.getOrganizations()
         if (response.success) {
-          const org = response.data.find((o: Organization) => o.id === params.id)
+          const org = response.data.find((o: Organization) => o.id === organizationId)
           if (org) {
             setOrganization(org)
             setFormData({
@@ -100,7 +111,7 @@ export default function EditOrganizationPage({ params }: { params: { id: string 
     }
 
     fetchOrganization()
-  }, [params.id, router, toast])
+  }, [organizationId, router, toast])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target

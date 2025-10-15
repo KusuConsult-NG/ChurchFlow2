@@ -35,7 +35,7 @@ interface StaffMember {
   updatedAt: string
 }
 
-export default function EditStaffPage({ params }: { params: { id: string } }) {
+export default function EditStaffPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
   const toast = useToastHelpers()
   const { user } = useAuth()
@@ -55,6 +55,7 @@ export default function EditStaffPage({ params }: { params: { id: string } }) {
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [staffId, setStaffId] = useState<string>('')
 
   const roles = [
     'Pastor',
@@ -86,11 +87,21 @@ export default function EditStaffPage({ params }: { params: { id: string } }) {
   ]
 
   useEffect(() => {
+    const initializeParams = async () => {
+      const resolvedParams = await params
+      setStaffId(resolvedParams.id)
+    }
+    initializeParams()
+  }, [params])
+
+  useEffect(() => {
+    if (!staffId) return
+
     const fetchStaff = async () => {
       try {
         const response = await apiClient.getStaff()
         if (response.success) {
-          const staffMember = response.data.find((s: StaffMember) => s.id === params.id)
+          const staffMember = response.data.find((s: StaffMember) => s.id === staffId)
           if (staffMember) {
             setStaff(staffMember)
             setFormData({
@@ -119,7 +130,7 @@ export default function EditStaffPage({ params }: { params: { id: string } }) {
     }
 
     fetchStaff()
-  }, [params.id, router, toast])
+  }, [staffId, router, toast])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target

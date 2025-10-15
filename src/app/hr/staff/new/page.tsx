@@ -118,8 +118,8 @@ export default function NewStaffPage() {
         toast.success('Success', 'Staff member added successfully!')
         router.push('/hr/staff')
       } else {
-        toast.error('Error', response.error || 'Failed to add staff member')
-        setErrors({ general: response.error || 'Failed to add staff member' })
+        toast.error('Error', 'Failed to add staff member')
+        setErrors({ general: 'Failed to add staff member' })
       }
     } catch (error: any) {
       console.error('Failed to add staff member:', error)

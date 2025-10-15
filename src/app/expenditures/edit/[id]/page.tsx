@@ -35,7 +35,7 @@ interface Expenditure {
   updatedAt: string
 }
 
-export default function EditExpenditurePage({ params }: { params: { id: string } }) {
+export default function EditExpenditurePage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
   const toast = useToastHelpers()
   const { user } = useAuth()
@@ -53,6 +53,7 @@ export default function EditExpenditurePage({ params }: { params: { id: string }
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [expenditureId, setExpenditureId] = useState<string>('')
 
   const expenditureTypes = [
     { value: 'general', label: 'General' },
@@ -63,11 +64,21 @@ export default function EditExpenditurePage({ params }: { params: { id: string }
   ]
 
   useEffect(() => {
+    const initializeParams = async () => {
+      const resolvedParams = await params
+      setExpenditureId(resolvedParams.id)
+    }
+    initializeParams()
+  }, [params])
+
+  useEffect(() => {
+    if (!expenditureId) return
+
     const fetchExpenditure = async () => {
       try {
         const response = await apiClient.getExpenditures()
         if (response.success) {
-          const exp = response.data.find((e: Expenditure) => e.id === params.id)
+          const exp = response.data.find((e: Expenditure) => e.id === expenditureId)
           if (exp) {
             setExpenditure(exp)
             setFormData({
@@ -94,7 +105,7 @@ export default function EditExpenditurePage({ params }: { params: { id: string }
     }
 
     fetchExpenditure()
-  }, [params.id, router, toast])
+  }, [expenditureId, router, toast])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -139,7 +150,7 @@ export default function EditExpenditurePage({ params }: { params: { id: string }
         beneficiaryName: formData.beneficiaryName
       }
 
-      const response = await apiClient.updateExpenditure(params.id, expenditureData)
+      const response = await apiClient.updateExpenditure(expenditureId, expenditureData)
       
       if (response.success) {
         toast.success('Success!', 'Expenditure updated successfully!')

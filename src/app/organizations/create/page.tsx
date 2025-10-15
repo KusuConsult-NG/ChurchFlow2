@@ -80,8 +80,8 @@ export default function CreateOrganizationPage() {
         toast.success('Success', 'Organization created successfully!')
         router.push('/organizations')
       } else {
-        toast.error('Error', response.error || 'Failed to create organization')
-        setErrors({ general: response.error || 'Failed to create organization' })
+        toast.error('Error', 'Failed to create organization')
+        setErrors({ general: 'Failed to create organization' })
       }
     } catch (error: any) {
       console.error('Failed to create organization:', error)
