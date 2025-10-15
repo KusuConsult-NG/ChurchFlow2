@@ -1,10 +1,21 @@
 import twilio from 'twilio'
 
-// Initialize Twilio client
-const client = twilio(
-  process.env.TWILIO_ACCOUNT_SID || 'YOUR_TWILIO_ACCOUNT_SID',
-  process.env.TWILIO_AUTH_TOKEN || 'YOUR_TWILIO_AUTH_TOKEN'
-)
+// Lazy initialization of Twilio client
+let client: any = null
+
+const getTwilioClient = () => {
+  if (!client) {
+    const accountSid = process.env.TWILIO_ACCOUNT_SID
+    const authToken = process.env.TWILIO_AUTH_TOKEN
+    
+    if (!accountSid || !authToken || accountSid === 'YOUR_TWILIO_ACCOUNT_SID' || authToken === 'YOUR_TWILIO_AUTH_TOKEN') {
+      throw new Error('Twilio credentials not properly configured')
+    }
+    
+    client = twilio(accountSid, authToken)
+  }
+  return client
+}
 
 const FROM_PHONE = process.env.TWILIO_PHONE_NUMBER || 'YOUR_TWILIO_PHONE_NUMBER'
 
@@ -35,7 +46,8 @@ export class TwilioService {
     }
 
     try {
-      const message = await client.messages.create({
+      const twilioClient = getTwilioClient()
+      const message = await twilioClient.messages.create({
         body: options.message,
         from: options.from || FROM_PHONE,
         to: options.to
@@ -223,7 +235,8 @@ export class TwilioService {
    */
   static async getMessageStatus(messageId: string): Promise<any> {
     try {
-      const message = await client.messages(messageId).fetch()
+      const twilioClient = getTwilioClient()
+      const message = await twilioClient.messages(messageId).fetch()
       return {
         success: true,
         status: message.status,
@@ -243,7 +256,8 @@ export class TwilioService {
    */
   static async getAccountBalance(): Promise<any> {
     try {
-      const balance = await client.balance.fetch()
+      const twilioClient = getTwilioClient()
+      const balance = await twilioClient.balance.fetch()
       return {
         success: true,
         balance: balance.balance,

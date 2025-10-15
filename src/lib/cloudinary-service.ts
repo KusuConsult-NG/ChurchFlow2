@@ -1,12 +1,30 @@
 import { v2 as cloudinary } from 'cloudinary'
 
-// Configure Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'df7zxiuxq',
-  api_key: process.env.CLOUDINARY_API_KEY || '694375151875773',
-  api_secret: process.env.CLOUDINARY_API_SECRET || 'H_49Pm6D97aSoHAoE7G4Gj0vIFI',
-  secure: true
-})
+// Lazy initialization of Cloudinary
+let isConfigured = false
+
+const configureCloudinary = () => {
+  if (!isConfigured) {
+    const cloudName = process.env.CLOUDINARY_CLOUD_NAME
+    const apiKey = process.env.CLOUDINARY_API_KEY
+    const apiSecret = process.env.CLOUDINARY_API_SECRET
+    
+    if (!cloudName || !apiKey || !apiSecret || 
+        cloudName === 'YOUR_CLOUDINARY_CLOUD_NAME' ||
+        apiKey === 'YOUR_CLOUDINARY_API_KEY' ||
+        apiSecret === 'YOUR_CLOUDINARY_API_SECRET') {
+      throw new Error('Cloudinary credentials not properly configured')
+    }
+    
+    cloudinary.config({
+      cloud_name: cloudName,
+      api_key: apiKey,
+      api_secret: apiSecret,
+      secure: true
+    })
+    isConfigured = true
+  }
+}
 
 export interface UploadResult {
   public_id: string
@@ -38,6 +56,8 @@ export class CloudinaryService {
     options: UploadOptions = {}
   ): Promise<UploadResult> {
     try {
+      configureCloudinary()
+      
       const uploadOptions = {
         folder: options.folder || 'churchflow',
         quality: options.quality || 'auto',

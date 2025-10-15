@@ -1,7 +1,20 @@
 import sgMail from '@sendgrid/mail'
 
-// Initialize SendGrid
-sgMail.setApiKey(process.env.SENDGRID_API_KEY || '')
+// Lazy initialization of SendGrid
+let isInitialized = false
+
+const initializeSendGrid = () => {
+  if (!isInitialized) {
+    const apiKey = process.env.SENDGRID_API_KEY
+    
+    if (!apiKey || apiKey === 'YOUR_SENDGRID_API_KEY') {
+      throw new Error('SendGrid API key not properly configured')
+    }
+    
+    sgMail.setApiKey(apiKey)
+    isInitialized = true
+  }
+}
 
 export interface EmailTemplate {
   to: string
@@ -16,6 +29,8 @@ export class EmailService {
 
   static async sendEmail(template: EmailTemplate) {
     try {
+      initializeSendGrid()
+      
       const msg = {
         to: template.to,
         from: {
