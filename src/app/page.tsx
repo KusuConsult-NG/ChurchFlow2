@@ -53,16 +53,16 @@ export default function LandingPage() {
             <div className="flex items-center space-x-4">
               <Button 
                 variant="outline" 
-                onClick={() => router.push('/auth/signup')}
+                onClick={() => router.push('/auth/signin')}
                 className="churchflow-secondary"
               >
-                Sign Up
+                Sign In
               </Button>
               <Button 
                 onClick={() => router.push('/auth/signup')}
                 className="churchflow-primary"
               >
-                Get Started
+                Sign Up
               </Button>
             </div>
           </div>
@@ -93,10 +93,10 @@ export default function LandingPage() {
               <Button 
                 size="lg" 
                 variant="outline" 
-                onClick={() => router.push('/auth/signup')}
+                onClick={() => router.push('/auth/signin')}
                 className="churchflow-secondary text-lg px-8 py-4"
               >
-                Sign Up
+                Sign In
               </Button>
             </div>
           </div>
@@ -210,10 +210,10 @@ export default function LandingPage() {
             <div className="flex justify-center space-x-6">
               <Button 
                 variant="outline" 
-                onClick={() => router.push('/auth/signup')}
+                onClick={() => router.push('/auth/signin')}
                 className="border-gray-600 text-white hover:bg-gray-800"
               >
-                Sign Up
+                Sign In
               </Button>
               <Button 
                 onClick={() => router.push('/auth/signup')}
