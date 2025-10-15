@@ -48,9 +48,6 @@ export function Topbar() {
               <span className="text-sm font-medium">
                 {user?.name || 'User'}
               </span>
-              <span className="text-xs text-gray-500">
-                ID: {user?.id || 'N/A'}
-              </span>
               <ChevronDown className="h-4 w-4" />
             </Button>
 
@@ -60,7 +57,6 @@ export function Topbar() {
                   <p className="text-sm font-medium text-gray-900">{user?.name}</p>
                   <p className="text-xs text-gray-500">{user?.email}</p>
                   <p className="text-xs text-gray-500">Role: {user?.role}</p>
-                  <p className="text-xs text-gray-500">ID: {user?.id}</p>
                 </div>
                 
                 <button
