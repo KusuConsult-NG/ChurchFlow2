@@ -124,10 +124,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signInWithGoogle = async () => {
     setLoading(true)
     try {
+      // Force account selection by clearing any existing session first
+      await signOut({ redirect: false })
+      
       // Use NextAuth's signIn function with Google provider
       const result = await signIn('google', { 
         redirect: false,
-        callbackUrl: '/dashboard'
+        callbackUrl: '/dashboard',
+        prompt: 'select_account' // Force account selection
       })
       
       if (result?.error) {
