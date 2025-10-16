@@ -81,18 +81,27 @@ export default function SignUpPage() {
 
   const handleGoogleSignUp = async () => {
     try {
-      // Open Google OAuth in a popup window
+      // Check if popup is blocked
       const popup = window.open(
         '/api/auth/signin/google?callbackUrl=/auth/google-callback',
         'google-auth',
-        'width=500,height=600,scrollbars=yes,resizable=yes'
+        'width=500,height=600,scrollbars=yes,resizable=yes,top=100,left=100'
       )
+      
+      if (!popup) {
+        // Popup blocked, fallback to redirect
+        window.location.href = '/api/auth/signin/google?callbackUrl=/auth/google-callback'
+        return
+      }
+      
+      // Focus the popup
+      popup.focus()
       
       // Listen for the popup to close or receive a message
       const checkClosed = setInterval(() => {
         if (popup?.closed) {
           clearInterval(checkClosed)
-          // Reload the page to check if user is now authenticated
+          // Check if user is now authenticated by reloading
           window.location.reload()
         }
       }, 1000)
@@ -117,6 +126,7 @@ export default function SignUpPage() {
       // Clean up listener when popup closes
       setTimeout(() => {
         window.removeEventListener('message', messageListener)
+        clearInterval(checkClosed)
       }, 300000) // 5 minutes timeout
       
     } catch (error: any) {
