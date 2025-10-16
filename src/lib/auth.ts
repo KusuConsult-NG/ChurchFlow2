@@ -2,6 +2,15 @@ import NextAuth from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 import { NextAuthOptions } from 'next-auth'
 
+// Extend the Profile type to include Google-specific properties
+interface GoogleProfile {
+  email_verified?: boolean
+  email?: string
+  name?: string
+  picture?: string
+  sub?: string
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
@@ -12,6 +21,9 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ user, account, profile }) {
       if (account?.provider === 'google') {
+        // Cast profile to GoogleProfile to access email_verified
+        const googleProfile = profile as GoogleProfile
+        
         // Verify that the user has a verified email
         if (!user.email) {
           console.log('Google OAuth: No email provided')
@@ -19,7 +31,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         // Check if email is verified by Google
-        if (profile?.email_verified !== true) {
+        if (googleProfile?.email_verified !== true) {
           console.log('Google OAuth: Email not verified by Google')
           return false
         }
@@ -43,7 +55,9 @@ export const authOptions: NextAuthOptions = {
         token.userId = user.id
         token.email = user.email
         token.name = user.name
-        token.emailVerified = profile?.email_verified || false
+        // Cast profile to GoogleProfile for email verification status
+        const googleProfile = profile as GoogleProfile
+        token.emailVerified = googleProfile?.email_verified || false
       }
       return token
     },
