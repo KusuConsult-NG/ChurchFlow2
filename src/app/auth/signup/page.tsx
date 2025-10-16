@@ -81,7 +81,44 @@ export default function SignUpPage() {
 
   const handleGoogleSignUp = async () => {
     try {
-      await signInWithGoogle()
+      // Open Google OAuth in a popup window
+      const popup = window.open(
+        '/api/auth/signin/google?callbackUrl=/auth/google-callback',
+        'google-auth',
+        'width=500,height=600,scrollbars=yes,resizable=yes'
+      )
+      
+      // Listen for the popup to close or receive a message
+      const checkClosed = setInterval(() => {
+        if (popup?.closed) {
+          clearInterval(checkClosed)
+          // Reload the page to check if user is now authenticated
+          window.location.reload()
+        }
+      }, 1000)
+      
+      // Listen for messages from the popup
+      const messageListener = (event: MessageEvent) => {
+        if (event.origin !== window.location.origin) return
+        
+        if (event.data.type === 'GOOGLE_AUTH_SUCCESS') {
+          clearInterval(checkClosed)
+          popup?.close()
+          window.location.href = '/dashboard'
+        } else if (event.data.type === 'GOOGLE_AUTH_ERROR') {
+          clearInterval(checkClosed)
+          popup?.close()
+          setErrors({ general: event.data.error || 'Google sign up failed' })
+        }
+      }
+      
+      window.addEventListener('message', messageListener)
+      
+      // Clean up listener when popup closes
+      setTimeout(() => {
+        window.removeEventListener('message', messageListener)
+      }, 300000) // 5 minutes timeout
+      
     } catch (error: any) {
       setErrors({ general: error.message || 'Google sign up failed' })
     }
