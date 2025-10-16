@@ -13,6 +13,7 @@ interface User {
   organizationId?: string
   organizationName?: string
   organizationType?: 'GCC' | 'DCC' | 'LCC' | 'LC'
+  emailVerified?: boolean
 }
 
 interface AuthContextType {
