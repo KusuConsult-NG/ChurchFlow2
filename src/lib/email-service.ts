@@ -51,6 +51,70 @@ export class EmailService {
     }
   }
 
+  static async sendVerificationEmail(email: string, verificationCode: string) {
+    const template: EmailTemplate = {
+      to: email,
+      subject: 'Verify Your ChurchFlow Account',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: linear-gradient(135deg, #000052 0%, #1a1a6b 100%); padding: 30px; text-align: center;">
+            <h1 style="color: white; margin: 0; font-size: 28px;">ChurchFlow</h1>
+            <p style="color: #e0e0e0; margin: 10px 0 0 0;">Email Verification</p>
+          </div>
+          
+          <div style="padding: 30px; background: #f9f9f9;">
+            <h2 style="color: #333; margin-top: 0;">Verify Your Email Address</h2>
+            <p style="color: #666; line-height: 1.6;">
+              Thank you for signing up with ChurchFlow! To complete your registration, 
+              please verify your email address using the code below:
+            </p>
+            
+            <div style="background: white; border: 2px solid #000052; border-radius: 8px; padding: 20px; text-align: center; margin: 20px 0;">
+              <h3 style="color: #000052; margin: 0; font-size: 32px; letter-spacing: 5px; font-family: monospace;">
+                ${verificationCode}
+              </h3>
+            </div>
+            
+            <p style="color: #666; line-height: 1.6;">
+              Enter this code in the verification form to activate your account. 
+              This code will expire in 15 minutes.
+            </p>
+            
+            <div style="margin-top: 30px; padding: 20px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+              <p style="color: #856404; margin: 0; font-size: 14px;">
+                <strong>Security Note:</strong> If you didn't create an account with ChurchFlow, 
+                please ignore this email.
+              </p>
+            </div>
+          </div>
+          
+          <div style="background: #333; padding: 20px; text-align: center;">
+            <p style="color: #ccc; margin: 0; font-size: 12px;">
+              © 2024 ChurchFlow. All rights reserved.
+            </p>
+          </div>
+        </div>
+      `,
+      text: `
+        ChurchFlow Email Verification
+        
+        Thank you for signing up with ChurchFlow! To complete your registration, 
+        please verify your email address using the code below:
+        
+        Verification Code: ${verificationCode}
+        
+        Enter this code in the verification form to activate your account. 
+        This code will expire in 15 minutes.
+        
+        If you didn't create an account with ChurchFlow, please ignore this email.
+        
+        © 2024 ChurchFlow. All rights reserved.
+      `
+    }
+
+    return this.sendEmail(template)
+  }
+
   static async sendPasswordResetEmail(email: string, resetToken: string) {
     const resetUrl = `${process.env.NEXTAUTH_URL}/auth/reset-password?token=${resetToken}`
     

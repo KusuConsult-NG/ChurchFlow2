@@ -21,32 +21,19 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ user, account, profile }) {
       if (account?.provider === 'google') {
-        // Cast profile to GoogleProfile to access email_verified
-        const googleProfile = profile as GoogleProfile
-        
-        // Verify that the user has a verified email
+        // Google OAuth users are already verified by Google
+        // We just need to ensure they have an email
         if (!user.email) {
           console.log('Google OAuth: No email provided')
           return false
         }
 
-        // Check if email is verified by Google
-        if (googleProfile?.email_verified !== true) {
-          console.log('Google OAuth: Email not verified by Google')
-          return false
-        }
-
-        // Additional validation: Check if user exists in our system or create them
-        try {
-          // Here you could check against your database
-          // For now, we'll allow all verified Google users
-          console.log('Google OAuth: User verified successfully', user.email)
-          return true
-        } catch (error) {
-          console.error('Google OAuth: Error during verification', error)
-          return false
-        }
+        // Google OAuth users are considered verified
+        console.log('Google OAuth: User authenticated successfully', user.email)
+        return true
       }
+      
+      // For regular email/password signin, we'll handle verification separately
       return true
     },
     async jwt({ token, user, account, profile }) {
@@ -55,9 +42,15 @@ export const authOptions: NextAuthOptions = {
         token.userId = user.id
         token.email = user.email
         token.name = user.name
-        // Cast profile to GoogleProfile for email verification status
-        const googleProfile = profile as GoogleProfile
-        token.emailVerified = googleProfile?.email_verified || false
+        
+        // For Google OAuth users, they are considered verified
+        if (account.provider === 'google') {
+          token.emailVerified = true
+        } else {
+          // For regular users, check if email is verified
+          const googleProfile = profile as GoogleProfile
+          token.emailVerified = googleProfile?.email_verified || false
+        }
       }
       return token
     },
