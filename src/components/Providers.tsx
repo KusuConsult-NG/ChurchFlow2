@@ -6,6 +6,7 @@ import { Sidebar } from "@/components/layout/Sidebar"
 import { Topbar } from "@/components/layout/Topbar"
 import { AuthGuard } from "@/components/AuthGuard"
 import { usePathname } from "next/navigation"
+import { SessionProvider } from "next-auth/react"
 
 interface ProvidersProps {
   children: React.ReactNode
@@ -19,26 +20,28 @@ export function Providers({ children }: ProvidersProps) {
   const isPublicRoute = publicRoutes.includes(pathname)
 
   return (
-    <ToastProvider>
-      <AuthProvider>
-        {isPublicRoute ? (
-          // Render public pages without dashboard layout
-          children
-        ) : (
-          // Render dashboard layout for authenticated pages
-          <div className="flex min-h-screen bg-gray-50">
-            <Sidebar />
-            <div className="flex-1 flex flex-col">
-              <Topbar />
-              <main className="flex-1 p-6">
-                <AuthGuard>
-                  {children}
-                </AuthGuard>
-              </main>
+    <SessionProvider>
+      <ToastProvider>
+        <AuthProvider>
+          {isPublicRoute ? (
+            // Render public pages without dashboard layout
+            children
+          ) : (
+            // Render dashboard layout for authenticated pages
+            <div className="flex min-h-screen bg-gray-50">
+              <Sidebar />
+              <div className="flex-1 flex flex-col">
+                <Topbar />
+                <main className="flex-1 p-6">
+                  <AuthGuard>
+                    {children}
+                  </AuthGuard>
+                </main>
+              </div>
             </div>
-          </div>
-        )}
-      </AuthProvider>
-    </ToastProvider>
+          )}
+        </AuthProvider>
+      </ToastProvider>
+    </SessionProvider>
   )
 }

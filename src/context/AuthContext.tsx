@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { signIn, signOut, useSession } from 'next-auth/react'
 
 interface User {
   id: string
@@ -31,6 +32,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
+  const { data: session, status } = useSession()
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -41,7 +43,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return
         }
 
-        // Use token-based auth
+        // Check NextAuth session first
+        if (session?.user) {
+          // Convert NextAuth session to our User format
+          setUser({
+            id: (session as any).userId || session.user.email || 'unknown',
+            email: session.user.email || '',
+            name: session.user.name || '',
+            firstName: session.user.name?.split(' ')[0] || '',
+            lastName: session.user.name?.split(' ').slice(1).join(' ') || '',
+            role: 'Member', // Default role, could be stored in session
+            emailVerified: (session as any).emailVerified || false
+          })
+          setLoading(false)
+          return
+        }
+
+        // Fallback to token-based auth for regular users
         const token = localStorage.getItem('auth_token')
         if (token) {
           const response = await fetch('/api/auth/verify', {
@@ -72,7 +90,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     checkAuth()
-  }, [])
+  }, [session, status])
 
   const login = async (email: string, password: string) => {
     setLoading(true)
@@ -106,19 +124,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signInWithGoogle = async () => {
     setLoading(true)
     try {
-      // For now, just redirect to dashboard with mock user
-      setUser({
-        id: 'google-user-1',
-        email: 'user@gmail.com',
-        name: 'Google User',
-        firstName: 'Google',
-        lastName: 'User',
-        role: 'Member',
-        organizationId: 'org-2',
-        organizationName: 'ChurchFlow GoodNews HighCost',
-        organizationType: 'LC'
+      // Use NextAuth's signIn function with Google provider
+      const result = await signIn('google', { 
+        redirect: false,
+        callbackUrl: '/dashboard'
       })
-      router.push('/dashboard')
+      
+      if (result?.error) {
+        throw new Error(result.error)
+      }
+      
+      // The session will be updated automatically by NextAuth
+      // We'll handle the redirect in the useEffect below
     } catch (error) {
       throw error
     } finally {
